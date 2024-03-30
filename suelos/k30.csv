@@ -1,0 +1,11 @@
+tipo;id-tipo_main;unidad;factor-SI;k30-min;k30-max;k30-recomendado;Fuente
+arcilla blanda;7;MN/m3;1000000;15;30;22.5;https://geotecniafacil.com/modulo-balasto-horizontal/
+arcilla media;6;MN/m3;1000000;30;60;45;https://geotecniafacil.com/modulo-balasto-horizontal/
+arcilla dura;5;MN/m3;1000000;60;200;130;https://geotecniafacil.com/modulo-balasto-horizontal/
+limo;4;MN/m3;1000000;15;45;30;https://geotecniafacil.com/modulo-balasto-horizontal/
+arena floja;3;MN/m3;1000000;10;30;20;https://geotecniafacil.com/modulo-balasto-horizontal/
+arena media;2;MN/m3;1000000;30;90;60;https://geotecniafacil.com/modulo-balasto-horizontal/
+arena compacta;1;MN/m3;1000000;90;200;145;https://geotecniafacil.com/modulo-balasto-horizontal/
+grava arenosa floja;0;MN/m3;1000000;70;120;95;https://geotecniafacil.com/modulo-balasto-horizontal/
+grava arenosa compacta;1;MN/m3;1000000;120;300;210;https://geotecniafacil.com/modulo-balasto-horizontal/
+margas arcillosas;5;MN/m3;1000000;200;400;300;https://geotecniafacil.com/modulo-balasto-horizontal/

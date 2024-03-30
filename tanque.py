@@ -39,7 +39,8 @@ class Viento:
         return vk*(z/h0)**self.gamma  # Velocidad del viento a una altura z
     
     def presion(self) -> sp.core.expr.Expr:
-        return self.rho*self.velocidad_z()**2/2  # Presión de viento sin coeficiente de arrastre
+        '''Presión de viento sin coeficiente de arrastre'''
+        return self.rho*self.velocidad_z()**2/2 
     
     def presion_10(self) -> float:
         '''Presión a 10m de altura'''
@@ -48,12 +49,12 @@ class Viento:
     def info_viento(self) -> None:
         '''Imprime información sobre el viento.
         
-        Se considera que los datos fueron introducidos en el Sistema Internacional
-        de unidades, sin múltiplos ni submúltiplos.
+        Se considera unidades del Sistema Internacional, sin múltiplos ni 
+        submúltiplos.
         '''
         print("\nVIENTO")
         print(f"Velocidad básica: {self.velocidad_basica} m/s")
-        print(f"Presión a 10m de altura: {self.presion_10()/1000:.2f} kN/m2")
+        print(f"Presión a 10 m de altura: {self.presion_10()/1000:.2f} kN/m2")
 
 
 @dataclass
@@ -79,7 +80,9 @@ class Tanque:
         if nueva_capacidad in valores_permitidos:
             self._capacidad = nueva_capacidad
         else:
-            raise ValueError(f"La capacidad {nueva_capacidad} no es válida. Debe ser uno de los siguientes valores: {valores_permitidos}")
+            raise ValueError(f"La capacidad {nueva_capacidad} no es válida. \
+                             Debe ser uno de los siguientes valores: \
+                             {valores_permitidos}")
 
     def datos_tanques(self) -> pd.DataFrame:
         '''Datos geométricos del tanque'''
@@ -96,22 +99,26 @@ class Tanque:
     def diam_fuste(self):
         '''Diámetro del fuste'''
         datos = self.datos_tanques()
-        return datos.loc[datos['capacidad'] == self.capacidad, 'diam_fuste'].item()
+        return datos.loc[datos['capacidad'] == self.capacidad, 
+                         'diam_fuste'].item()
     
     def altura_fuste(self):
         '''Altura del fuste'''
         datos = self.datos_tanques()
-        return datos.loc[datos['capacidad'] == self.capacidad, 'altura_fuste'].item()
+        return datos.loc[datos['capacidad'] == self.capacidad, 
+                         'altura_fuste'].item()
     
     def diam_copa(self):
         '''Diámetro de la copa'''
         datos = self.datos_tanques()
-        return datos.loc[datos['capacidad'] == self.capacidad, 'diam_copa'].item()
+        return datos.loc[datos['capacidad'] == self.capacidad, 
+                         'diam_copa'].item()
     
     def altura_copa(self):
         '''Altura de la copa'''
         datos = self.datos_tanques()
-        return datos.loc[datos['capacidad'] == self.capacidad, 'altura_copa'].item()
+        return datos.loc[datos['capacidad'] == self.capacidad, 
+                         'altura_copa'].item()
 
     def pp(self):
         '''Peso propio del tanque en kN.
@@ -178,8 +185,11 @@ class Tanque:
         '''Coeficiente de resistencia del fuste'''
         return self.coef_resist(self.diam_copa() / self.altura_copa())
     
-    def reacciones(self) -> Tuple[float, float]:
-        '''Fuerza horizontal (N) y momento flector en la base (Nm)'''
+    def reacciones_viento(self) -> Tuple[float]:
+        '''Horizontal (N) y Flector en la base (Nm) debidas al viento.
+        
+        No tienen coeficientes de seguridad.
+        '''
         z = sp.symbols('z') #cota vertical, m
         Dc = self.diam_copa()
         Df = self.diam_fuste()
@@ -205,16 +215,36 @@ class Tanque:
 
         return H, M
     
+    # Obtenemos las cargas del tanque
+    def reacciones_mayoradas(self, gamma_G=1.35, gamma_Q=1.5) -> Tuple[float]:
+        '''Reacciones mayoradas del tanque.
+
+        Devuelve: H, V, M (Horizontal, Vertical, Momento)
+        
+        gamma_G: Coef. seguridad para cargas permanentes;
+        gamma_Q: Coef. seguridad para cargas variables.
+
+        Nota:
+        - Se considera que el agua es una carga variable.
+        '''
+        Ne = gamma_G*self.carga_normal(agua=False)  # Carga con tanque vacío
+        V = Ne + gamma_Q*self.peso_agua() # Carga con tanque lleno
+        H1, M1 = self.reacciones_viento()  # Horizontal y flector en la base
+        H = gamma_Q*H1  # Fuerza horizontal mayorada
+        M = gamma_Q*M1  # Momento flector mayorado
+        return H, V, M
+    
     def info_tanque(self):
         '''Imprime información sobre el tanque.
         
-        Se considera que los datos fueron introducidos en el Sistema Internacional
-        de unidades, sin múltiplos ni submúltiplos.
+        Se considera unidades del Sistema Internacional, sin múltiplos ni 
+        submúltiplos.
         '''
         print("\nTANQUE")
         print(f"Capacidad: {self.capacidad} m3")
         print(f"Carga vertical: {self.carga_normal()/1000:.2f} kN")
 
-        H1, M1 = self.reacciones()  # Fuerza horizontal y momento flector en la base
+        # Fuerza horizontal y momento flector en la base
+        H1, M1 = self.reacciones_viento()
         print(f"Fuerza horizontal: {H1/1000:.2f} kN")
         print(f"Flector en la base: {M1/1000:.2f} kN")

@@ -1,0 +1,9 @@
+id;tipo;cohesivo;S_adm;unidad;factor-SI;Fuente
+0;Grava;0;0.294;MPa;1000000;cype
+1;Arena densa;0;0.245;MPa;1000000;cype
+2;Arena semidensa;0;0.196;MPa;1000000;cype
+3;Arena suelta;0;0.098;MPa;1000000;cype
+4;Limo;0;0.118;MPa;1000000;cype
+5;Arcilla dura;1;0.245;MPa;1000000;cype
+6;Arcilla semidura;1;0.147;MPa;1000000;cype
+7;Arcilla blanda;1;0.098;MPa;1000000;cype
